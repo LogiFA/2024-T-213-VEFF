@@ -1,0 +1,9 @@
+POST /api/v1/genres HTTP/1.1
+Host: localhost:3000
+Authorization: HMAC d5951928a797e3de418978abeb1c4f036672aa63b3241843493bfae1c0e60923
+Content-Type: application/json
+Content-Length: 31
+
+{
+    "name": "Fantasy Novel"
+}
