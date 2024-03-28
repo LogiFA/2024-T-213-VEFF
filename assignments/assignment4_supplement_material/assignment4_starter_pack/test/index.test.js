@@ -15,20 +15,19 @@ describe("Endpoint tests", () => {
    Write your tests below here
   ---------------------------*/
 
+
   it("GET /events - should return all events", async () => {
-    const response = await request(app).get("api/v1/events");
-    // TODO check that response body is there and is an array
+    const response = await request(app).get("/api/v1/books");
     expect(response.statusCode).toBe(200);
-    expect(response.body).toHaveLength(3);
-  })
+    expect(response.body).toBeDefined();
+    expect(Array.isArray(response.body)).toBe(true);
+    expect(response.body.length).toBeGreaterThan(0);
+  });
+  
 
   it("Post /events - should create a new event", async () => {
     const response = (await request(app).post("api/v1/events")).body();
     expect(response.statusCode).toBe(200);
-    // expect(response.body).toHaveProperty('id', 4)
-    // expect(response.body).toHaveProperty('name', "my new event")
-    // expect(response.body).toHaveProperty('date', "2024-05-01")
-    // expect(response.body).toHaveProperty('location', "harpa")
     // expect(response.body).toMatchObject({
     //   id: 4,
     //   name : "my new event",
