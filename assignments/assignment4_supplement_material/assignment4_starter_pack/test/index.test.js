@@ -24,17 +24,10 @@ describe("Endpoint tests", () => {
     expect(response.body.length).toBeGreaterThan(0);
   });
   
-
-  // it("Post /events - should create a new event", async () => {
-  //   const response = (await request(app).post("api/v1/events")).body();
-  //   expect(response.statusCode).toBe(200);
-  //   // expect(response.body).toMatchObject({
-  //   //   id: 4,
-  //   //   name : "my new event",
-  //   //   date : "2024-05-01",
-  //   //   location : "harpa"
-  //   // })
-  // });
+  //   id: 4,
+  //   name : "my new event",
+  //   date : "2024-05-01",
+  //   location : "harpa"
 
   it("Post /events - should create a new event", async () => {
     // Example genreId and bookId - these should be replaced with actual IDs
@@ -53,9 +46,9 @@ describe("Endpoint tests", () => {
     expect(response.body).toHaveProperty('genreId', genreId);
   });
   
-  it("PATCH /api/v1/genres/:genreId/books/:bookId should update a book and return the updated object with a 200 status", async () => {
+  it("PATCH /events - should update a certain event", async () => {
     const genreId = 1;
-    const bookId = 123;
+    const bookId = 2;
     const updateData = {
       title: "Updated Book Title",
       author: "Updated Author",
@@ -68,6 +61,36 @@ describe("Endpoint tests", () => {
     expect(response.body.author).toBe(updateData.author);
     expect(response.body.genreId).toBe(genreId);
   });
+  
+  it("PATCH /events - should fail when an existing book is addressed using an incorrect, but existing genreId", async () => {
+    const incorrectGenreId = 2;
+    const bookId = 1;
+    const updateData = { title: "Attempted Invalid Update" };
+    const response = await request(app).patch(`/api/v1/genres/${incorrectGenreId}/books/${bookId}`).send(updateData);
+    expect(response.statusCode).toBe(404);
+    expect(response.body).toBeDefined();
+    expect(response.body.message).toContain(`${bookId} does not exists in genre id ${incorrectGenreId}`);
+  });
+
+  it("PATCH /evets - when a request is made with a non-empty request body that does not contain any valid property", async () => {
+    const genreId = 1
+    const bookId = 3
+    const invalidUpdateData = { publicationYear: 2020 };
+    const response = await request(app).patch(`/api/v1/genres/${genreId}/books/${bookId}`).send(invalidUpdateData);
+    expect(response.statusCode).toBe(400);
+    expect(response.body).toBeDefined();
+    expect(response.body.message).toBe("To update a book, you need to provide a title, an author, or a new genreId.");
+  });
+
+  it("GET /events should fail when the book with the provided id does not exist", async () => {
+    const genreId = 1;
+    const bookId = 9; 
+    const response = await request(app).get(`/api/v1/genres/${genreId}/books/${bookId}`);
+    expect(response.statusCode).toBe(404);
+    expect(response.body).toBeDefined();
+    expect(response.body.message).toBe(`Book with id ${bookId} does not exist`);
+  });
+
   
 
   // Try to call and endpoint that does not exists
